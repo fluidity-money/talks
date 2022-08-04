@@ -20,8 +20,6 @@ alex@fluidity.money
 	- CTO of Fluidity Money
 
 - Fluidity Money
-	- Generating yield as you use your crypto in the form of a
-	random function
 
 ## Fluidity
 
@@ -35,6 +33,10 @@ alex@fluidity.money
 - What's a layer 1?
 
 .image layer-1-the-blockchain-layer.png 540 960
+
+: a layer 1 is ultimately the blockchain layer - miners take blocks and
+: are a core part of the layer 1 machinery, but ultimately the layer 1 is
+: simply the blockchain that's being added to itself
 
 ## Let's talk about layer 2s...
 
@@ -63,7 +65,8 @@ alex@fluidity.money
 : state channels are back and forth between users until the final state
 : is sent to the blockchain - application-specific ultimate compression
 
-: TODO rollups explain
+: rollups are aggregating transactions and then relaying them to the
+: mainchain in batches with proofs that they're legit
 
 ## Sidechains
 
@@ -85,10 +88,17 @@ the mainchain
 - State channels are implemented as a series of back and forth
 IOU interactions between a group of users (usually two)
 
-.image state-channel-example-users.png
+.image state-channel-example-users.png 300 400
+
+: the example here being a pair of users working together on the bit of
+: history that would be put onchain
 
 - Users pass cheques/IOUs to each other that could be cashed on the
 layer 1
+
+: the contract might expect a specific outcome of how to spend the money
+: that would require signing the final stage together with an immediate
+: release of funds, otherwise it'll take some time as a precaution
 
 - These "cheques" might be using a smart contract
 
@@ -115,12 +125,14 @@ layer 1
 - Off-chain computation that regularly updates a smart contract with
 batches of what took place inside the rollup
 
-: TODO
+: an off-chain computation takes place with respect to the contract's
+: state (it's merkle root)
 
-- "Batches" are each transactions that were made and the state of the
-contract (the merkle root) if the transactions were processed
+- "Batches" are transactions that were made and the state of the
+contract (the merkle root)
 
-: TODO
+: batches are submitted with the new state of the merkle root and a way
+: of verifying legitimacy
 
 - How to trust the state of the contract (the merkle root)?
 	- Either includes a proof as to correctness (validity/ZK approach)
@@ -145,7 +157,11 @@ to be released (optimistic approach)
 
 : --- OPTIMISTIC ROLLUPS! ---
 
-: TODO space
+: optimistic rollups easily support the EVM
+
+: not as compact as a ZK proof, keeps track of its history of merkle
+: roots and has a period where new merkle roots aren't accepted so as to
+: verify legitimacy of the new root
 
 .html rollups-compared.html
 
@@ -198,11 +214,12 @@ Key issues with each offering:
 - Wish it were easier to "annotate" contracts that were already deployed
 to build state channels on top of them
 
-: TODO
+: would be nice if we could annotate existing contracts to build state
+: channels on top of the contract functions
 
 - Wish it were easier to compress what's in the rollup further
 
-: TODO
+: what's in the rollup isn't being compressed beyond the transactions
 
 Seems like what's lacking is a common technology to build a DAG (directed
 acyclic graph) of the state machine contained within the contract...
@@ -213,7 +230,7 @@ Why?
 : in the smart contract - for example - imagine uniswap aggregates 100
 : orders, we could match the orders for each inside the
 : rollup... but would that imply a lockup period and a fraud proof? are
-: we able to lean on zkps to do so? yes TODO
+: we able to lean on zkps to do so? probably
 
 ## The no-code opportunity
 
@@ -233,9 +250,7 @@ expensive!
 - Most ZK rollups host a slew of publicly available prebuilt
 contracts/circuits for exchanges and the like
 
-: case in point, zksync's exchange, the many others
-
-: TODO we can reuse this
+: there are many of these
 
 A single tool to describe the traversal between each state in a
 non-obtuse way is the silver bullet!
@@ -256,15 +271,13 @@ building markets to "buy" outcomes locked up within the layer 2
 
 : a la boba/cross-chain swap without hosted contracts, but on a
 : per-application basis, might in some cases be cheaper than the
-: verification of a proof - could also be tacked together recursively
+: verification of the proof - could also be tacked together recursively
 : still off-chain
 
 - Developers can indicate when to support jumping out of the state channel
 instantly versus requiring a lockup period, achieve max compression
 
 : this is only feasible by annotating the state graph for the contracts
-
-: TODO
 
 ## The no-code opportunity
 
@@ -287,27 +300,14 @@ instantly versus requiring a lockup period, achieve max compression
 : in the contract - are we able to add evm compatibility to existing
 : contracts this way? this is possible with application-specific thinking
 
-- Chainlink hypothesis
+- We would benefit from chain agnostic no-code networking!
 
-: chainlink is the mark of maturity on public blockchains like mcdonalds
-: being available in developing countries
+: fanout, fanin, we need to easily connect this to dapps or else we're
+: doomed to always have poorly compressed data onchain and to not benefit
+: from the slew of tools already available
 
-## Are "high performance" layer 1s going to be redundant?
-
-: TODO
-
-: you might argue that they already are
-
-- EVM compatibility for existing contracts on chains without it with
-rollups/state channels on top with application-specific work involved
-
-- Will the future include a paradigm shift away from blockchain-orientated
-thinking to topology-orientated thinking with layer 2s?
-
-: things are abstract enough, things are getting liquid enough, programmers
-: implementing features could "write once and run anywhere", pick a rollup
-: and go to town, even on chains without EVM - are we going to just think
-: in terms of the state machine of the application?
+: the technology's already here, the problem is utilising it without
+: extra work for programmers - how do we do this effectively?
 
 ## A custom topology for a bidding market
 
@@ -391,7 +391,14 @@ each state with proofs)
 
 ## In a state machine world... no code edition
 
-This could also be built into the following no-code diagram:
+As a final example:
+
+.html final-example.html
+
+: assume the code on the right is representative of a real solidity
+: contract that was written, with this approach we've outsourced the
+: generation of proofs that would've happened anyway with a design like
+: this to something off the shelf
 
 ## Conclusion
 
@@ -411,5 +418,3 @@ code generation (in theory) to benefit from that compression
 
 5. No-code can be used to annotate existing codebases to benefit from
 heterogenous networking topologies
-
-: TODO
