@@ -1,0 +1,415 @@
+
+# Application-specific rollups
+
+Alexander Baigent
+Fluidity Money
+5th August 2022
+alex@fluidity.money
+
+: this talk is for people with some understanding about the blockchain
+: who would do with a brief refresher before getting into the nitty gritty
+
+: my name's alex, i'm working on fluidity money, a way to generate yield
+: every time you use the blockchain
+
+## Fluidity
+
+.image fluidity-logo.svg 300 200
+
+- My background
+	- CTO of Fluidity Money
+
+- Fluidity Money
+	- Generating yield as you use your crypto in the form of a
+	random function
+
+## Fluidity
+
+: i would encourage you to check out our website, check out our economics
+: whitepaper and to pay attention to our brand redesign
+
+.html fluidity-information.html
+
+## Let's talk about layer 2s...
+
+- What's a layer 1?
+
+.image layer-1-the-blockchain-layer.png 540 960
+
+## Let's talk about layer 2s...
+
+.image layer-2-any.png 403 623
+
+: builds on top of the existing blockchain layer
+
+- Why is it important?
+	- It's a form of building compression on top of the blockchain
+
+: impossible to build a high performance layer 1 that can scale, sharding
+: in a sense is the creation of second party side chains
+
+: with layer 2s, because you're not depending on the slow layer 1 that can
+: in some cases only process 15 transactions a second, you can build much
+: faster techonlogy with a greater capacity and compress the bare minimum
+: to store on-chain
+
+## What layer 2s are there?
+
+.html what-layer-2s-are-there.html
+
+: sidechains are separate blockchains where information flows from the
+: "sidechain" to the "mainchain"
+
+: state channels are back and forth between users until the final state
+: is sent to the blockchain - application-specific ultimate compression
+
+: TODO rollups explain
+
+## Sidechains
+
+- Sidechains are separate blockchains with a relationship with the
+"main chain"
+
+- Connected via a "two-way peg", a mechanism to get information onto
+the mainchain
+
+: the many public blockchains with support for ethereum could be
+: considered sidechains in that context
+
+.html sidechain-table.html
+
+: fanout broadcast with almost certainty of knowing the latest event
+
+## State channels
+
+- State channels are implemented as a series of back and forth
+IOU interactions between a group of users (usually two)
+
+.image state-channel-example-users.png
+
+- Users pass cheques/IOUs to each other that could be cashed on the
+layer 1
+
+- These "cheques" might be using a smart contract
+
+: prominent examples include lightning and raiden
+
+: ultimate form of compression! since application context aware! doesn't
+: just compress the transactions and the way they're passed to the chain!
+
+## State channel pros and cons
+
+.html state-channel-pros-and-cons.html
+
+: supporting state channels takes a special configuration that's needed
+: for the contract or a "guard" that's aware of the application context
+: of the underlying contract - it should be noted that the design of
+: state channels implies the compression but might not be the case
+
+: data availability is still an issue with compression like this since
+: implies liveliness for information retrieval/another technology to
+: store that
+
+## Rollups
+
+- Off-chain computation that regularly updates a smart contract with
+batches of what took place inside the rollup
+
+: TODO
+
+- "Batches" are each transactions that were made and the state of the
+contract (the merkle root) if the transactions were processed
+
+: TODO
+
+- How to trust the state of the contract (the merkle root)?
+	- Either includes a proof as to correctness (validity/ZK approach)
+	- Or submits the claim and a period is waited before allowing the funds
+to be released (optimistic approach)
+
+- Is the same as a sidechain
+
+- Very small in size
+
+## Rollups compared
+
+: --- ZK ROLLUPS! ---
+
+: difficult to support the EVM completely! recursively
+: approaching this is a pain in the ass! turing-completeness is difficult
+
+: proof happening onchain immediately! no lockup of funds like optimistic
+: rollups
+
+: compute harder in contrast
+
+: --- OPTIMISTIC ROLLUPS! ---
+
+: TODO space
+
+.html rollups-compared.html
+
+## Rollup pros and cons
+
+: rollups are the thing that's hot right now because you don't need to
+: tweak any existing contracts imo
+
+.html rollup-pros-and-cons.html
+
+: it should be noted that the sequencer liveliness is something that
+: CAN be a pro in a safe world with some degree of slashing taking place,
+: it CAN be a con if you have downtime
+
+## Key differentiating features
+
+.html key-differentiating-features.html
+
+Rollups are the same as sidechains!
+
+## Is there something better?
+
+Key issues with each offering:
+
+.html key-issues-with-each-offering.html
+
+: let's face it: sidechains are useless compared to rollups - rollups are
+: either designed to have a centralised sequencer or to have an election
+: process - functionally speaking it's the same as a sidechain - though
+: what makes it really superior to a sidechain is that anyone can submit
+: their transactions to the contract in the event of the sequencer being
+: down, an advantage that would have to be replicated on a per-case
+: basis with a sidechain where it's possible to do this, but not a feature
+: that's inherent to the sidechain ecosystem today afaik
+
+: state channels are perfect as the ultimate form of compression, but
+: they're not able to be used without writing specialised contracts to
+: utilise it so in practice they're mostly restricted to payments
+
+: existing rollups are not as compressed as they could be because they
+: don't represent the culmination of each state of the application in
+: its compressed form - they're a growth hack to facilitate off-chain
+: scaling with existing dapps - multiparty bundling of transactions
+: is still possible to be built with state channels - of course,
+: the application-specific compression could still take place with
+: a rollup, it's just not implied by the offering
+
+## How could we improve each offering from a UX perspective?
+
+- Wish it were easier to "annotate" contracts that were already deployed
+to build state channels on top of them
+
+: TODO
+
+- Wish it were easier to compress what's in the rollup further
+
+: TODO
+
+Seems like what's lacking is a common technology to build a DAG (directed
+acyclic graph) of the state machine contained within the contract...
+
+Why?
+
+: compression's only possible with an understanding of the context
+: in the smart contract - for example - imagine uniswap aggregates 100
+: orders, we could match the orders for each inside the
+: rollup... but would that imply a lockup period and a fraud proof? are
+: we able to lean on zkps to do so? yes TODO
+
+## The no-code opportunity
+
+Currently the ecosystem is so:
+
+- ZK tools to build proofs for application-specific interactions
+
+: using cairo and the like
+
+- ZKP tools for supporting the turing-complete subset of the EVM aren't
+available as supporting so involves recursively tying proofs together -
+expensive!
+
+: of course, with application-specific thinking, you can design circuits
+: that are space-efficient
+
+- Most ZK rollups host a slew of publicly available prebuilt
+contracts/circuits for exchanges and the like
+
+: case in point, zksync's exchange, the many others
+
+: TODO we can reuse this
+
+A single tool to describe the traversal between each state in a
+non-obtuse way is the silver bullet!
+
+## The no-code opportunity
+
+A tool for annotating traversal between each state would:
+
+- Simplify proof tools
+
+: tying together programs that are precompiled/prewritten in their most
+: abstract form would simplify the creation of proofs for applications
+
+- If that's not possible, precise understanding of the contract means
+building markets to "buy" outcomes locked up within the layer 2
+
+: can buy outcomes locked up in optimistic lockups
+
+: a la boba/cross-chain swap without hosted contracts, but on a
+: per-application basis, might in some cases be cheaper than the
+: verification of a proof - could also be tacked together recursively
+: still off-chain
+
+- Developers can indicate when to support jumping out of the state channel
+instantly versus requiring a lockup period, achieve max compression
+
+: this is only feasible by annotating the state graph for the contracts
+
+: TODO
+
+## The no-code opportunity
+
+- Paradigm shift taking place in blockchain
+
+: users aren't thinking in terms of specific chains any more, it's a
+: "cross-chain ecosystem" in its infancy
+
+- Ecosystem going the way of the cambrian Lisp explosion to ratification?
+
+: : each blockchain is functionally analogous to each other, are we headed
+: towards a common specification for chatting to each by RPC? already
+: headed there with WASM/evm support to an extent...
+
+- Some rollups are building support for cross-chain compute...
+
+: in the future, will the trapped value of a layer 1 be driven by the
+: engagement of prolific layer 2s on top? these cross-chain compute rollups
+: have the approach for verifying the transactions contained within embedded
+: in the contract - are we able to add evm compatibility to existing
+: contracts this way? this is possible with application-specific thinking
+
+- Chainlink hypothesis
+
+: chainlink is the mark of maturity on public blockchains like mcdonalds
+: being available in developing countries
+
+## Are "high performance" layer 1s going to be redundant?
+
+: TODO
+
+: you might argue that they already are
+
+- EVM compatibility for existing contracts on chains without it with
+rollups/state channels on top with application-specific work involved
+
+- Will the future include a paradigm shift away from blockchain-orientated
+thinking to topology-orientated thinking with layer 2s?
+
+: things are abstract enough, things are getting liquid enough, programmers
+: implementing features could "write once and run anywhere", pick a rollup
+: and go to town, even on chains without EVM - are we going to just think
+: in terms of the state machine of the application?
+
+## A custom topology for a bidding market
+
+: imagine a fast-paced bidding situation for a raise that either raises
+: "enough" or fails
+
+.html auction-custom-topology.html
+
+: 1. imagine that the user is looking to raise an amount as a target,
+: or fail in doing so
+
+: in this example, you would benefit from having this information
+: on-chain aggregated in the form of a rollup, and you don't need to
+: compress this information further in terms of the application state
+: machine - you need to verify that the users involved in the bidding
+: have the money locked up for participating
+
+: 3. user cretaes a hub to start taking direct connections from users
+: in the real world, this would involve a lot of expensive programming :
+: and infrastructure building
+
+: this situation's good since we drop all the unused bids, so we compress
+: away that information, we ignore the extraneous bids and we compress the
+: final outcome in the form of a merkle root - unfortunately requires that
+: traders lock up their funds - the smart contract can be set up to prevent the
+: release of funds unless the user included the trader in the merkle root
+
+## In a state machine world...
+
+This entire process is the following state machine:
+
+.image example-state-machine.png
+
+(Abstracting away the networking and proof)
+
+: you know, with this example, the very end is the bit that would be
+: compressed down to, using a rollup you would have to include several
+: transactions on-chain that would lead up to this final state - not ideal!
+
+## In a state machine world...
+
+This could be translated into a state machine using a type system:
+
+: this is intentionally pretty abstract and only possible by aligning the
+: incentives of the user taking the amounts
+
+: this is a pretty succint representation of how the state works in this
+: example!
+
+---
+
+	type _ auction =
+	  | Auction_open :
+	    [`Auction_open] auction
+	  [%networking create_hub, transmit_to_chain]
+
+	  | Auction_offer :
+	    address_owner * amount * digest * [< `Auction_open | `Auction_offer] auction ->
+	    [< `Auction_offer] auction
+	  [%networking auction_hub]
+
+	  | Auction_close :
+	    [`Auction_open | `Auction_offer] auction ->
+	    [`Auction_close] auction
+	 [@@merkle_tree]
+
+- GADTs for the types (way to guarantee a certain relationship between
+each state with proofs)
+
+- Each type annotated to define the networking requirement
+
+: this is utilising "generalised algebraic datatypes" to build a directed
+: acyclic graph with a code generation annotation - wanted to get into the nitty
+: gritty but probably running out of time at this stage
+
+: since SOME application logic is taking place here, the user would
+: need to reconstruct this type before sending to only include the winners
+: beyond hitting the upper bound of the amount that can be raised
+
+: what's here is analogous to the next slide
+
+## In a state machine world... no code edition
+
+This could also be built into the following no-code diagram:
+
+## Conclusion
+
+To summarise:
+
+1. Different layer 2 options with different tradeoffs
+
+2. Best form of compression only possible with application context awareness
+because an application can span many transactions, have a different
+requirement for completion/liveliness and visibility for each transaction
+
+3. Ecosystem headed to a consolidation moment with rollups and EVM
+everywhere
+
+4. Type systems can be used to capture the application's state machine with
+code generation (in theory) to benefit from that compression
+
+5. No-code can be used to annotate existing codebases to benefit from
+heterogenous networking topologies
+
+: TODO

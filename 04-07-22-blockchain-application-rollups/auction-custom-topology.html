@@ -1,0 +1,33 @@
+<small>
+	<div style="display: flex; flex-direction: row; justify-content: space-between">
+		<ol>
+			<li>
+User signs transaction indicating they're auctioning fractional rights
+			</li>
+			<li>
+Rollup takes transaction and puts it on mainchain, broadcasts it to
+connected users on the rollup
+			</li>
+			<li>
+User creates a hub, opens a connection with each trader
+			</li>
+			<li>
+Traders transmit to the hub a signed commitment to buy an amount of an
+asset (increasing higher to be guaranteed a slot)
+			</li>
+			<li>
+User picks the highest bids and aggregates them, then generates a merkle
+tree and a merkle root
+			</li>
+			<li>
+Using the original rollup, the user uploads the merkle root, traders who
+wish to redeem their asset can then upload an inclusion proof on-chain
+to get their asset
+			</li>
+			<li>
+User redeems bid amounts by sending to the mainchain each transaction
+			</li>
+		</ol>
+		<img style="width: 300px; height: 225px" src="auction-custom-topology.png" />
+	</div>
+</small>
